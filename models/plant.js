@@ -13,6 +13,6 @@ const plantSchema = new mongoose.Schema({
   favorite: { type: Boolean, default: false },
 });
 
-const PlantSchema = mongoose.model("plants", plantSchema);
+const PlantSchema = mongoose.model("Plant", plantSchema);
 
 module.exports = PlantSchema;
