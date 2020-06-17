@@ -8,4 +8,6 @@ router.get("/:id", plantController.getPlantById);
 router.delete("/:id", plantController.deletePlant);
 router.patch("/:id", plantController.updatePlant);
 
+router.get("/:name", plantController.getPlantByName);
+
 module.exports = router;

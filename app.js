@@ -19,7 +19,12 @@ const connect = () => {
 };
 connect();
 
+const disconnect = () => {
+  return mongoose.disconnect();
+};
+
 const app = express();
+app.disconnect = disconnect;
 
 app.use(cors({ origin: "*" }));
 // view engine setup

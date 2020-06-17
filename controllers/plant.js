@@ -10,7 +10,7 @@ const createPlant = async (req, res, next) => {
       description: req.body.description,
       interestingFact: req.body.interestingFact,
     });
-    res.status(200).json({ result: plant });
+    res.status(201).json({ result: plant });
   } catch (err) {
     next(err);
   }
@@ -44,8 +44,6 @@ const getPlantByName = async (req, res, next) => {
     if (plant) {
       res.status(200).json({ match: plant, partialMatches: [] });
     } else {
-      // const plants = await PlantSchema.findByName(req.params.name);
-      // My search
       const request = req.params.name;
       const plants = await PlantSchema.find(
         {
@@ -53,8 +51,6 @@ const getPlantByName = async (req, res, next) => {
         },
         { score: { $meta: "textScore" } }
       ).sort({ score: { $meta: "textScore" } });
-
-      //
       res.status(200).json({ match: null, partialMatches: plants });
     }
   } catch (err) {
@@ -64,7 +60,12 @@ const getPlantByName = async (req, res, next) => {
 
 const deletePlant = async (req, res, next) => {
   try {
-    const plant = await getPlantById(req.params.id);
+    console.log(req.params, "here");
+    const plant = await PlantSchema.findById(req.params.id);
+    if (!plant) {
+      res.status(404).json({ err: "Not found" });
+      return;
+    }
     await plant.remove();
     res.status(200).json({ result: "done", deletedPlant: plant });
   } catch (err) {
@@ -72,10 +73,9 @@ const deletePlant = async (req, res, next) => {
   }
 };
 
-// TODO
 const updatePlant = async (req, res, next) => {
   try {
-    const plant = await getPlantById(req.params.id);
+    const plant = await PlantSchema.findById(req.params.id);
     Object.assign(plant, req.body);
     plant.save();
     res.status(200).json({ result: "done", updatedPlant: plant });
