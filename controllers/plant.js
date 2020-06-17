@@ -29,9 +29,34 @@ const getPlantById = async (req, res, next) => {
   try {
     const plant = await PlantSchema.findById(req.params.id);
     if (!plant) {
-      throw new Error("Not found");
+      res.status(404).json({ err: "Not found" });
+      return;
     }
     res.status(200).json({ result: plant });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getPlantByName = async (req, res, next) => {
+  try {
+    const plant = await PlantSchema.findOne({ name: req.params.name });
+    if (plant) {
+      res.status(200).json({ match: plant, partialMatches: [] });
+    } else {
+      // const plants = await PlantSchema.findByName(req.params.name);
+      // My search
+      const request = req.params.name;
+      const plants = await PlantSchema.find(
+        {
+          $text: { $search: request },
+        },
+        { score: { $meta: "textScore" } }
+      ).sort({ score: { $meta: "textScore" } });
+
+      //
+      res.status(200).json({ match: null, partialMatches: plants });
+    }
   } catch (err) {
     next(err);
   }
@@ -63,6 +88,7 @@ module.exports = {
   createPlant,
   getPlants,
   getPlantById,
+  getPlantByName,
   deletePlant,
   updatePlant,
 };
