@@ -91,10 +91,10 @@ describe("HTTP API", () => {
   });
 
   // Find the Plant by name
-  describe.only("GET /plants/search", () => {
+  describe.only("GET /plants/?name=ficus", () => {
     it("should return status code 200", () => {
       return request
-        .get("/plants/search?name=Ficus")
+        .get("/plants/?name=ficus")
         .expect(200)
         .expect("Content-Type", "application/json; charset=utf-8")
         .expect((res) => {

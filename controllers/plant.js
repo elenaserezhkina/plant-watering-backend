@@ -18,8 +18,19 @@ const createPlant = async (req, res, next) => {
 
 const getPlants = async (req, res, next) => {
   try {
-    const plants = await PlantSchema.find();
-    res.status(200).json({ result: plants });
+    if (req.query.name) {
+      const request = req.query.name;
+      const plants = await PlantSchema.find(
+        {
+          $text: { $search: request },
+        },
+        { score: { $meta: "textScore" } }
+      ).sort({ score: { $meta: "textScore" } });
+      res.status(200).json({ result: plants });
+    } else {
+      const plants = await PlantSchema.find();
+      res.status(200).json({ result: plants });
+    }
   } catch (err) {
     next(err);
   }
@@ -33,26 +44,6 @@ const getPlantById = async (req, res, next) => {
       return;
     }
     res.status(200).json({ result: plant });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const getPlantByName = async (req, res, next) => {
-  try {
-    const plant = await PlantSchema.findOne({ name: req.query.name });
-    if (plant) {
-      res.status(200).json({ match: plant, partialMatches: [] });
-    } else {
-      const request = req.query.name;
-      const plants = await PlantSchema.find(
-        {
-          $text: { $search: request },
-        },
-        { score: { $meta: "textScore" } }
-      ).sort({ score: { $meta: "textScore" } });
-      res.status(200).json({ match: null, partialMatches: plants });
-    }
   } catch (err) {
     next(err);
   }
@@ -88,7 +79,6 @@ module.exports = {
   createPlant,
   getPlants,
   getPlantById,
-  getPlantByName,
   deletePlant,
   updatePlant,
 };
