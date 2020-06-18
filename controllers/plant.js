@@ -40,11 +40,11 @@ const getPlantById = async (req, res, next) => {
 
 const getPlantByName = async (req, res, next) => {
   try {
-    const plant = await PlantSchema.findOne({ name: req.params.name });
+    const plant = await PlantSchema.findOne({ name: req.query.name });
     if (plant) {
       res.status(200).json({ match: plant, partialMatches: [] });
     } else {
-      const request = req.params.name;
+      const request = req.query.name;
       const plants = await PlantSchema.find(
         {
           $text: { $search: request },

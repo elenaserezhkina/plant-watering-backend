@@ -90,6 +90,23 @@ describe("HTTP API", () => {
     });
   });
 
+  // Find the Plant by name
+  describe.only("GET /plants/search", () => {
+    it("should return status code 200", () => {
+      return request
+        .get("/plants/search?name=Ficus")
+        .expect(200)
+        .expect("Content-Type", "application/json; charset=utf-8")
+        .expect((res) => {
+          // function that takes responce and check if it contains string name.
+
+          if (!res.text.includes("Ficus")) {
+            throw new Error("Invalid body");
+          }
+        });
+    });
+  });
+
   after(() => {
     server.close();
   });
