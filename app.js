@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const plantsRouter = require("./routes/plants");
-const usersRouter = require("./routes/users");
 
 // Connection for Mongoose
 const connect = () => {
@@ -38,7 +37,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/plants", plantsRouter);
-app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
